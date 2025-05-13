@@ -14,7 +14,6 @@ export const MqttProvider = ({ children }) => {
     };
   });
   
-
   useEffect(() => {
     const mqttClient = mqtt.connect({
       hostname: "mqttbroker.bc-pl.com",
@@ -65,7 +64,7 @@ export const MqttProvider = ({ children }) => {
       setData((prevData) => {
         const updatedData = {
           ...prevData,
-          [topic]: [...(prevData[topic] || []), newMessage].slice(-7),
+          [topic]: [...(prevData[topic] || []), newMessage].slice(-80),
         };
         localStorage.setItem("mqttData", JSON.stringify(updatedData));
         return updatedData;

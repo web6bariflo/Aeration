@@ -8,11 +8,35 @@ const App = () => {
   const message2 = data["pump/stepper/status"] || [];
 
   const handleCompressor = () => {
+    clearTopicData("pump/compressor/status")
     publishMessage("pump/compressor/control", "START");
   };
 
   const handleAeration = () => {
+    clearTopicData("pump/stepper/status")
     publishMessage("pump/stepper/control", "START");
+  };
+
+  // Function to split date and time
+  const formatDateTime = (timeStr) => {
+    const date = new Date(timeStr);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return {
+      date: `${year}-${month}-${day}`,
+      time: `${hours}:${minutes}:${seconds}`
+    };
+  };
+
+  // Function to get color class
+  const getColor = (value) => {
+    if (value === 'Started') return 'text-green-600';
+    if (value === 'Stopped') return 'text-red-600';
+    return 'text-gray-700';
   };
 
   return (
@@ -36,11 +60,20 @@ const App = () => {
           <div className="mt-4 text-left">
             <h2 className="text-sm font-medium text-gray-700 mb-1">Compressor Messages</h2>
             <div className="bg-gray-50 p-2 h-60 w-80 overflow-y-auto rounded border border-gray-200 text-xs">
+
               {message1.length > 0 ? (
-                message1.map((msg, index) => <div key={index}>{JSON.stringify(msg)}</div>)
+                message1.map((msg, index) => {
+                  const { date, time } = formatDateTime(msg.time);
+                  return (
+                    <div key={index} className={getColor(msg.value)}>
+                      Date: {date} Time: {time} State: {msg.value}
+                    </div>
+                  );
+                })
               ) : (
                 <div className="text-gray-400">No messages yet.</div>
               )}
+
             </div>
           </div>
         </div>
@@ -57,7 +90,14 @@ const App = () => {
             <h2 className="text-sm font-medium text-gray-700 mb-1">Aeration Messages:</h2>
             <div className="bg-gray-50 p-2 h-60 w-80 overflow-y-auto rounded border border-gray-200 text-xs">
               {message2.length > 0 ? (
-                message2.map((msg, index) => <div key={index}>{JSON.stringify(msg)}</div>)
+                message2.map((msg, index) => {
+                  const { date, time } = formatDateTime(msg.time);
+                  return (
+                    <div key={index} className={getColor(msg.value)}>
+                      Date: {date} Time: {time} State: {msg.value}
+                    </div>
+                  );
+                })
               ) : (
                 <div className="text-gray-400">No messages yet.</div>
               )}
