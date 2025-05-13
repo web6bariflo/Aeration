@@ -1,24 +1,32 @@
 import React from 'react';
 import { useMqtt } from './store/MqttContext';
+import { MdBatteryFull } from 'react-icons/md';
 
 const App = () => {
   const { data, clearTopicData, publishMessage } = useMqtt();
-  const message1 = data["123/data"] || [];
-  const message2 = data["456/data"] || [];
+  const message1 = data["pump/compressor/status"] || [];
+  const message2 = data["pump/stepper/status"] || [];
 
   const handleCompressor = () => {
-    publishMessage("compressor", "ON");
+    publishMessage("pump/compressor/control", "START");
   };
 
   const handleAeration = () => {
-    publishMessage("aeration", "ON");
+    publishMessage("pump/stepper/control", "START");
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex space-x-10">
+      <div className="flex gap-10">
+
+        {/* Battery Icon - Top Right Outside Compressor Section */}
+        <div className="absolute top-30 right-48 flex items-center gap-1 bg-gray-100 px-2 py-1 rounded shadow">
+          <MdBatteryFull className="text-green-600 w-5 h-5" />
+          <span className="text-sm font-semibold text-gray-700">85%</span>
+        </div>
+
         {/* Compressor Section */}
-        <div className="bg-white shadow-md rounded p-6 w-80 text-center">
+        <div className="bg-white shadow-md rounded p-6 w-full text-center">
           <button
             onClick={handleCompressor}
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
@@ -26,8 +34,8 @@ const App = () => {
             Compressor On
           </button>
           <div className="mt-4 text-left">
-            <h2 className="text-sm font-medium text-gray-700 mb-1">Compressor Messages (Topic: 123/data):</h2>
-            <div className="bg-gray-50 p-2 h-40 overflow-y-auto rounded border border-gray-200 text-xs">
+            <h2 className="text-sm font-medium text-gray-700 mb-1">Compressor Messages</h2>
+            <div className="bg-gray-50 p-2 h-60 w-80 overflow-y-auto rounded border border-gray-200 text-xs">
               {message1.length > 0 ? (
                 message1.map((msg, index) => <div key={index}>{JSON.stringify(msg)}</div>)
               ) : (
@@ -38,7 +46,7 @@ const App = () => {
         </div>
 
         {/* Aeration Section */}
-        <div className="bg-white shadow-md rounded p-6 w-80 text-center">
+        <div className="bg-white shadow-md rounded p-6 w-full h-96 text-center">
           <button
             onClick={handleAeration}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
@@ -46,8 +54,8 @@ const App = () => {
             Aeration On
           </button>
           <div className="mt-4 text-left">
-            <h2 className="text-sm font-medium text-gray-700 mb-1">Aeration Messages (Topic: 456/data):</h2>
-            <div className="bg-gray-50 p-2 h-40 overflow-y-auto rounded border border-gray-200 text-xs">
+            <h2 className="text-sm font-medium text-gray-700 mb-1">Aeration Messages:</h2>
+            <div className="bg-gray-50 p-2 h-60 w-80 overflow-y-auto rounded border border-gray-200 text-xs">
               {message2.length > 0 ? (
                 message2.map((msg, index) => <div key={index}>{JSON.stringify(msg)}</div>)
               ) : (

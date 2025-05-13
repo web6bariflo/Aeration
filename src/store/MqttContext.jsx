@@ -9,8 +9,8 @@ export const MqttProvider = ({ children }) => {
   const [connectionStatus, setConnectionStatus] = useState("disconnected"); // Track connection state
   const [data, setData] = useState(() => {
     return JSON.parse(localStorage.getItem("mqttData")) || {
-      "123/data": [],
-      "456/data": [],
+      "pump/compressor/status": [],
+      "pump/stepper/status": [],
     };
   });
   
@@ -37,7 +37,7 @@ export const MqttProvider = ({ children }) => {
 
     mqttClient.on("connect", () => {
       handleStatusChange("connected");
-      mqttClient.subscribe(["123/data", "456/data"]);
+      mqttClient.subscribe(["pump/compressor/status", "pump/stepper/status"]);
     });
 
     mqttClient.on("reconnect", () => {
