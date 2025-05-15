@@ -9,7 +9,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const App = () => {
 
 
-  
+
   const { data, clearTopicData, publishMessage } = useMqtt();
   const message1 = data["pump/compressor/status"] || [];
   const message2 = data["pump/stepper/status"] || [];
@@ -41,8 +41,8 @@ const App = () => {
   };
 
   const getColor = (value) => {
-    if (value === 'Started') return 'text-green-600 font-bold';
-    if (value === 'Stopped') return 'text-red-600 font-bold';
+    if (value === 'Started') return 'text-green-600 text-[13px]';
+    if (value === 'Stopped') return 'text-red-600 text-[12.5px]';
     return 'text-gray-700';
   };
 
@@ -96,46 +96,45 @@ const App = () => {
 
         {/* Top Row Controls */}
         <div className="flex flex-row justify-between items-center mb-4">
-        {/* CSV Download Button */}
-        <button
-          onClick={handleCSVDownload}
-          disabled={loading}
-          className={`text-sm px-3 py-1 rounded flex items-center gap-1 text-white ${
-            loading
-              ? 'bg-blue-300 cursor-not-allowed'
-              : 'bg-blue-400 hover:bg-blue-500'
-          }`}
-        >
-          {loading ? (
-            <>
-              <svg
-                className="animate-spin h-4 w-4 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
-                ></path>
-              </svg>
-              Loading...
-            </>
-          ) : (
-            <>
-              .csv <FiDownload className="text-base" />
-            </>
-          )}
-        </button>
+          {/* CSV Download Button */}
+          <button
+            onClick={handleCSVDownload}
+            disabled={loading}
+            className={`text-sm px-3 py-1 rounded flex items-center gap-1 text-white ${loading
+                ? 'bg-blue-300 cursor-not-allowed'
+                : 'bg-blue-400 hover:bg-blue-500'
+              }`}
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
+                  ></path>
+                </svg>
+                Loading...
+              </>
+            ) : (
+              <>
+                .csv <FiDownload className="text-base" />
+              </>
+            )}
+          </button>
 
           <div className="flex items-center gap-1 bg-gray-300 px-2 py-1 rounded shadow">
             <MdBatteryFull className="text-green-600 w-5 h-5" />
@@ -170,7 +169,7 @@ const App = () => {
                     const { date, time } = formatDateTime(msg.time);
                     return (
                       <div key={index} className={getColor(msg.value)}>
-                        Date: {date} Time: {time} State: {msg.value}
+                        Date: <span className=' font-bold'> {date} </span>   Time: <span className=' font-bold'> {time} </span>  State: <span className=' font-bold text-sm'> {msg.value} </span>
                       </div>
                     );
                   })
@@ -201,12 +200,12 @@ const App = () => {
             <div className="mt-4 text-center">
               <h2 className="text-sm font-medium text-gray-700 mb-1">Aeration Messages:</h2>
               <div className="bg-gray-50 p-2 h-60 w-full md:w-80 overflow-y-auto rounded border border-gray-200 text-xs">
-                {message2.length > 0 ? (
+                  {message2.length > 0 ? (
                   message2.map((msg, index) => {
                     const { date, time } = formatDateTime(msg.time);
                     return (
                       <div key={index} className={getColor(msg.value)}>
-                        Date: {date} Time: {time} State: {msg.value}
+                        Date: <span className=' font-bold'> {date} </span>   Time: <span className=' font-bold'> {time} </span>  State: <span className=' font-bold text-sm'> {msg.value} </span>
                       </div>
                     );
                   })
