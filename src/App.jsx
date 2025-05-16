@@ -185,10 +185,10 @@ const App = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-1 bg-gray-300 px-2 py-1 rounded shadow">
+          {/* <div className="flex items-center gap-1 bg-gray-300 px-2 py-1 rounded shadow">
             <MdBatteryFull className="text-green-600 w-5 h-5" />
             <span className="text-sm font-semibold text-gray-700">85%</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Compressor and Aeration Sections */}
