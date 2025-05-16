@@ -11,6 +11,7 @@ export const MqttProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem("mqttData")) || {
       "pump/compressor/status": [],
       "pump/stepper/status": [],
+      "pump/system/status":[],
     };
   });
   
@@ -36,7 +37,7 @@ export const MqttProvider = ({ children }) => {
 
     mqttClient.on("connect", () => {
       handleStatusChange("connected");
-      mqttClient.subscribe(["pump/compressor/status", "pump/stepper/status"]);
+      mqttClient.subscribe(["pump/compressor/status","pump/stepper/status","pump/system/status"]);
     });
 
     mqttClient.on("reconnect", () => {

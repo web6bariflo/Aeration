@@ -1,20 +1,58 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useMqtt } from './store/MqttContext';
 import { MdBatteryFull } from 'react-icons/md';
 import { FiDownload } from 'react-icons/fi';
+import { IoWifiSharp } from "react-icons/io5";
 import axios from 'axios';
+import Navbar from './pages/Navbar';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const App = () => {
-
-
+  const [loading, setLoading] = React.useState(false);
+  const [connected, setConnected] = useState("Disconnected")
+  const lastMessageTimeRef = useRef(Date.now());
 
   const { data, clearTopicData, publishMessage } = useMqtt();
   const message1 = data["pump/compressor/status"] || [];
   const message2 = data["pump/stepper/status"] || [];
 
-  const [loading, setLoading] = React.useState(false);
+  const rawStatus = data["pump/system/status"] || []
+  // console.log(rawStatus);
+
+  const lastStatus = rawStatus.length > 0 ? rawStatus[rawStatus.length - 1] : null;
+  const wifiStatus = lastStatus ? lastStatus.value : ""
+
+
+  //  console.log(lastStatus);
+  //  console.log(wifiStatus);
+
+  useEffect(() => {
+    if (rawStatus.length > 0) {
+      // Update last received time on every new message
+      lastMessageTimeRef.current = Date.now();
+    }
+  }, [rawStatus]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Date.now() - lastMessageTimeRef.current > 3000) {
+        setConnected("Disconnected");
+        clearTopicData("pump/system/status");
+      }
+    }, 1000); // Check every second
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (wifiStatus.toLowerCase().includes("connected")) {
+      setConnected("Connected");
+    }
+    // No else: Disconnection handled by timer above
+  }, [wifiStatus]);
+
+
 
   const handleCompressor = () => {
     clearTopicData("pump/compressor/status")
@@ -90,7 +128,8 @@ const App = () => {
     }
   };
 
-  return (
+  return (<>
+  <Navbar/>
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="flex flex-col gap-4 w-full md:w-3xl">
 
@@ -101,8 +140,8 @@ const App = () => {
             onClick={handleCSVDownload}
             disabled={loading}
             className={`text-sm px-3 py-1 rounded flex items-center gap-1 text-white ${loading
-                ? 'bg-blue-300 cursor-not-allowed'
-                : 'bg-blue-400 hover:bg-blue-500'
+              ? 'bg-blue-300 cursor-not-allowed'
+              : 'bg-blue-400 hover:bg-blue-500'
               }`}
           >
             {loading ? (
@@ -135,6 +174,16 @@ const App = () => {
               </>
             )}
           </button>
+
+          <div className="flex items-center gap-1 bg-gray-300 px-2 py-1 rounded shadow">
+            <IoWifiSharp
+              className={`w-5 h-5 ${connected === "Connected" ? "text-green-600" : "text-red-600"
+                }`}
+            />
+            <span className="text-sm font-semibold text-gray-700">
+              {connected}
+            </span>
+          </div>
 
           <div className="flex items-center gap-1 bg-gray-300 px-2 py-1 rounded shadow">
             <MdBatteryFull className="text-green-600 w-5 h-5" />
@@ -200,7 +249,7 @@ const App = () => {
             <div className="mt-4 text-center">
               <h2 className="text-sm font-medium text-gray-700 mb-1">Aeration Messages:</h2>
               <div className="bg-gray-50 p-2 h-60 w-full md:w-80 overflow-y-auto rounded border border-gray-200 text-xs">
-                  {message2.length > 0 ? (
+                {message2.length > 0 ? (
                   message2.map((msg, index) => {
                     const { date, time } = formatDateTime(msg.time);
                     return (
@@ -218,6 +267,7 @@ const App = () => {
         </div>
       </div>
     </div>
+    </>
   );
 
 };
